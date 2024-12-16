@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { useTransactionList } from '../hooks/useTransactionList';
 import SearchBar from '../components/SearchBar';
-import Filter from '../components/Filter';
 import TransactionList from '../components/TransactionList';
 import { styles } from '../styles/TransactionListScreen.styles';
 import { useNavigation } from '@react-navigation/native';
@@ -20,15 +19,33 @@ const TransactionListScreen: React.FC = () => {
 
     const { transactions, loading, error } = useTransactionList();
     const [query, setQuery] = useState<string>('');
+    const [sortOption, setSortOption] = useState<string>('');
 
     const handleSearch = (text: string) => setQuery(text);
+    const handleSort = (option: string) => {
+        setSortOption(option);
+    };
+
+    const currentSortLabel = (() => {
+        if (sortOption === 'name_asc') return 'Nama A-Z';
+        if (sortOption === 'name_desc') return 'Nama Z-A';
+        if (sortOption === 'date_desc') return 'Tanggal Terbaru';
+        if (sortOption === 'date_asc') return 'Tanggal Terlama';
+        return 'URUTKAN';
+    })();
 
     const filteredTransactions = transactions.filter((txn) =>
         txn.beneficiary_name.toLowerCase().includes(query.toLowerCase()) ||
         txn.sender_bank.toLowerCase().includes(query.toLowerCase()) ||
         txn.beneficiary_bank.toLowerCase().includes(query.toLowerCase()) ||
         txn.amount.toString().includes(query.toLowerCase())
-    );
+    ).sort((a, b) => {
+        if (sortOption === 'name_asc') return a.beneficiary_name.localeCompare(b.beneficiary_name);
+        if (sortOption === 'name_desc') return b.beneficiary_name.localeCompare(a.beneficiary_name);
+        if (sortOption === 'date_desc') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        if (sortOption === 'date_asc') return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        return 0;
+    });
 
     const handlePressTransaction = (id: string) => {
         navigation.navigate('TransactionDetail', { transactionId: id });
@@ -39,7 +56,12 @@ const TransactionListScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <SearchBar query={query} onChange={handleSearch} />
+            <SearchBar
+                query={query}
+                onChange={handleSearch}
+                onSort={handleSort}
+                currentSort={currentSortLabel}
+            />
             <TransactionList 
                 transactions={filteredTransactions} 
                 onPress={handlePressTransaction} 

@@ -14,6 +14,7 @@ export const useTransactionList = () => {
       try {
         const data = await getTransactions();
         setTransactions(data);
+        // console.log('transactionList: '+JSON.stringify(data));
       } catch (err) {
         setError('Error fetching transactions.');
       } finally {

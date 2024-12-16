@@ -16,8 +16,8 @@ interface TransactionDetailScreenProps {
 
 const TransactionDetailScreen: React.FC<TransactionDetailScreenProps> = ({ route }) => {
   const { transactionId } = route.params;
-  const { transactions } = useTransactionList(); // Fetch all transactions from the state
-  const { transaction } = useTransaction(transactionId, transactions); // Filter by the selected transaction ID
+  const { transactions } = useTransactionList();
+  const { transaction } = useTransaction(transactionId, transactions);
   const navigation = useNavigation();
 
   if (!transaction) return <Text>Transaction not found</Text>;

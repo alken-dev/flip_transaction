@@ -5,10 +5,12 @@ export const useTransaction = (transactionId: string, transactions: Transaction[
   const [transaction, setTransaction] = useState<Transaction | null>(null);
 
   useEffect(() => {
-    // Filter the transactions to find the transaction with the given ID
+    // console.log('transactionid: '+transactionId);
+    // console.log('transaction: '+JSON.stringify(transactions));
     const foundTransaction = transactions.find((txn) => txn.id === transactionId);
+    console.log('founded: '+JSON.stringify(foundTransaction));
     setTransaction(foundTransaction || null);
-  }, [transactionId, transactions]); // Re-run when transactionId or transactions change
+  }, [transactionId, transactions]); 
 
   return { transaction };
 };
