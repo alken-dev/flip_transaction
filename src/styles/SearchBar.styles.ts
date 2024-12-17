@@ -4,13 +4,18 @@ export const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    textAlign: 'center',
+    alignSelf: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#DDD',
     paddingHorizontal: 10,
     height: 50,
+    width: '92%',
     position: 'relative',
+    marginTop: 8,
+    marginBottom: 8,
   },
   input: {
     flex: 1,

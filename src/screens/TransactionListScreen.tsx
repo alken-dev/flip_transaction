@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { useTransactionList } from '../hooks/useTransactionList';
 import SearchBar from '../components/SearchBar';
 import TransactionList from '../components/TransactionList';
@@ -7,6 +7,7 @@ import { styles } from '../styles/TransactionListScreen.styles';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types'; // Import the types
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Transaction } from '../models/types';
 
 type TransactionListScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -17,9 +18,10 @@ const TransactionListScreen: React.FC = () => {
 
     const navigation = useNavigation<TransactionListScreenNavigationProp>();
 
-    const { transactions, loading, error } = useTransactionList();
+    const { transactions, loading, error, fetchTransactions } = useTransactionList();
     const [query, setQuery] = useState<string>('');
     const [sortOption, setSortOption] = useState<string>('');
+    const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const handleSearch = (text: string) => setQuery(text);
     const handleSort = (option: string) => {
@@ -47,9 +49,14 @@ const TransactionListScreen: React.FC = () => {
         return 0;
     });
 
-    const handlePressTransaction = (id: string) => {
-        navigation.navigate('TransactionDetail', { transactionId: id });
+    const handlePressTransaction = (transaction: Transaction) => {
+        navigation.navigate('TransactionDetail', { transactionDetail: transaction });
       };
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchTransactions().finally(() => setRefreshing(false));  // Assuming `fetchTransactions` is the method that loads transactions
+    }, [fetchTransactions]);
 
     if (loading) return <Text style={styles.message}>Loading...</Text>;
     if (error) return <Text style={styles.message}>{error}</Text>;
@@ -62,9 +69,17 @@ const TransactionListScreen: React.FC = () => {
                 onSort={handleSort}
                 currentSort={currentSortLabel}
             />
-            <TransactionList 
-                transactions={filteredTransactions} 
-                onPress={handlePressTransaction} 
+            <FlatList
+                data={filteredTransactions}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                <TransactionList transactions={[item]} onPress={handlePressTransaction} />
+                )}
+                refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+                contentContainerStyle={{ paddingBottom: 16 }}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );

@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useTransaction } from '../hooks/useTransaction';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import TransactionDetail from '../components/TransactionDetail';
-import { useTransactionList } from '../hooks/useTransactionList';
+import { Transaction } from '../models/types';
 
 type RootStackParamList = {
   TransactionList: undefined;
-  TransactionDetail: { transactionId: string };
+  TransactionDetail: { transactionDetail: Transaction };
 };
 
 interface TransactionDetailScreenProps {
@@ -15,19 +14,14 @@ interface TransactionDetailScreenProps {
 }
 
 const TransactionDetailScreen: React.FC<TransactionDetailScreenProps> = ({ route }) => {
-  const { transactionId } = route.params;
-  const { transactions } = useTransactionList();
-  const { transaction } = useTransaction(transactionId, transactions);
+  const { transactionDetail } = route.params;
   const navigation = useNavigation();
 
-  if (!transaction) return <Text>Transaction not found</Text>;
+  if (!transactionDetail) return <Text>Transaction not found</Text>;
 
   return (
     <View>
-      <TransactionDetail transaction={transaction} />
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text>Back to List</Text>
-      </TouchableOpacity>
+      <TransactionDetail transaction={transactionDetail} onClose={() => navigation.goBack()} />
     </View>
   );
 };
