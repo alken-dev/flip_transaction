@@ -7,7 +7,7 @@ import { formatToRpFromNumber } from '../utils/currencyUtils'
 
 interface TransactionListProps {
     transactions: Transaction[];
-    onPress: (id: string) => void;
+    onPress: (transaction: Transaction) => void;
 }
 
 const TransactionList: React.FC<TransactionListProps> = ({ transactions, onPress }) => {
@@ -15,14 +15,14 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions, onPress
         const isPending = item.status === 'PENDING';
         return (
             <TouchableOpacity
-                onPress={() => onPress(item.id)}
+                onPress={() => onPress(item)}
                 style={styles.container}
             >
                 <View style={[styles.statusIndicator, isPending && styles.pending]} />
                 <View style={styles.content}>
                     <View style={styles.headerRow}>
                         <Text style={styles.bankText}>
-                            {`${item.sender_bank} → ${item.beneficiary_bank}`}
+                            {`${item.sender_bank} ➔ ${item.beneficiary_bank}`}
                         </Text>
                         <View
                             style={[

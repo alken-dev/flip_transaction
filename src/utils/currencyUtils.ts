@@ -1,3 +1,3 @@
 export const formatToRpFromNumber = (amount: number): string => {
-    return 'Rp ' + amount.toLocaleString('id-ID');
+    return 'Rp' + amount.toLocaleString('id-ID');
 };

@@ -11,8 +11,8 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="TransactionList">
-        <Stack.Screen name="TransactionList" component={TransactionListScreen} />
-        <Stack.Screen name="TransactionDetail" component={TransactionDetailScreen} />
+        <Stack.Screen name="TransactionList" component={TransactionListScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="TransactionDetail" component={TransactionDetailScreen} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
